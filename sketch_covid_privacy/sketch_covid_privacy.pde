@@ -1,12 +1,13 @@
-GUI gui = new GUI();
 
-long ts, date; int tunit;
+long ts, date; 
+int tunit;
 ArrayList<Agent> agents;
 ArrayList<Environment> envs;
 ArrayList<Rectangle> bnds;
 Grid grid_hospital, grid_home;
-Env_Params residential, industrial;
+Env_Params residential, industrial; // TO-DO: move to ArrayList
 Server server;
+GUI gui = new GUI();
 
 PrintWriter output; 
 boolean save_result = false;
@@ -16,6 +17,7 @@ boolean save_result = false;
 void init() {
   ts = 0;
   date = 0;
+  println("hello");
   tunit = gui.tunit; // time unit: minutes
   envs = new ArrayList<Environment>();
   bnds = new ArrayList<Rectangle>();
@@ -23,30 +25,38 @@ void init() {
   grid_hospital = new Grid("Hospital", 700, 50, 15, 1, 12, 12);
   grid_home = new Grid("Quarantine", 950, 50, 15, 1, 12, 12);
 
-  residential = new Env_Params("Residential", 0, 6, 9, 1, gui.color_residential);
-  industrial = new Env_Params("Industrial", 1, 17, 20, 1, gui.color_industrial);
+  residential = new Env_Params("Residential", 0, gui.residential_hours, gui.s_residential_max_speed, gui.color_residential);
+  industrial = new Env_Params("Industrial", 1, gui.industrial_hours, gui.s_industrial_max_speed, gui.color_industrial);
 
   server = new Server();
   agents = new ArrayList<Agent>();
 }
 
 void init_boundaries() {
-  // init boundaries
-  // grid shape
-  float n = 3, s = 200, m = 10;
-  for (int i=0; i < n; i++) {
-    for (int j=0; j < n; j++) {
-      bnds.add(new Rectangle(i*(s+m) + s/2 + 50, j*(s+m) + s/2 + 50, s/2, s/2));
+  int ww = 500, hh = 500;
+  if (gui.env_mode) {
+    // grid shape
+    float n = ceil(sqrt(gui.env_n)), s = ww/n, m = 10;
+    int bnd_cont = 0;
+    for (int i=0; i < n; i++) {
+      for (int j=0; j < n; j++) {
+        bnds.add(new Rectangle(j*(s+m) + s/2 + 50, i*(s+m) + s/2 + 50, s/2, s/2));
+        bnd_cont++;
+        if (bnd_cont >= gui.env_n) break;
+      }
+      if (bnd_cont >= gui.env_n) break;
+    }
+  } else {
+    // random shape
+    int m = 10;
+    for (int i=0; i < gui.env_n; i++) {
+      float w = random(10, 50);
+      float h = random(10, 50);
+      float x = random(m+w, ww-w-m);
+      float y = random(m+h, hh-h-m);
+      bnds.add(new Rectangle(x, y, w, h));
     }
   }
-  // random shape
-  //for (int i=0; i < 20; i++) {
-  //  float w = random(10, 50);
-  //  float h = random(10, 50);
-  //  float x = random(10+w, 600-w-10);
-  //  float y = random(10+h, 600-h-10);
-  //  bnds.add(new Rectangle(x, y, w, h));
-  //}
 }
 
 void init_environments() {
@@ -63,7 +73,7 @@ void init_environments() {
     envs.add(env);
   }
 }
-void reset(){
+void reset() {
   init();
   init_boundaries();
   init_environments();
@@ -71,9 +81,10 @@ void reset(){
 
 void setup() {
   size(1200, 800);
-  gui.cp5 = new ControlP5(this).setPosition(800,300);
-  gui.control();
-  
+  //fullScreen();
+  gui.cp5 = new ControlP5(this).setPosition(950, 400);
+  gui.cp5_control();
+
   if (save_result) {
     output = createWriter("result.txt"); 
     output.println("ts,agent_A,agent_B,dist");
@@ -103,16 +114,23 @@ void draw() {
     env.display();
   }
   // time
-  float px = 900, py = 550;
+  float px = 100, py = 650;
   residential.display_time(px, py);
   industrial.display_time(px, py);
   gui.display_time(px, py);
 
   // legend
-  residential.display_legend(600, 550);
-  industrial.display_legend(600, 570);
-  gui.display_legend_state(700, 550);
-  gui.display_legend_comm(800, 550);
+  residential.display_legend(100, 700);
+  industrial.display_legend(100, 720);
+  gui.display_legend_state(200, 700);
+  gui.display_legend_comm(300, 700);
+  
+  gui.display_info(400, 675);
+  
+  // env params
+  residential.update();
+  industrial.update();
+
 
   // agents
   for (Agent agent : agents) {
@@ -127,8 +145,6 @@ void draw() {
     ts++;
     date += tunit;
   }
-  gui.display();
-
 }
 
 
