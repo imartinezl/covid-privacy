@@ -5,6 +5,24 @@ class GUI {
   }
   ControlP5 cp5;
 
+  int tunit;
+  void control() {
+
+    cp5.addSlider("tunit")
+      .plugTo(this)
+      .setPosition(0, 0)
+      .setRange(1, 10)
+      .setValue(1)
+      .setNumberOfTickMarks(10)
+      ;
+
+    cp5.addButton("reset")
+      .setValue(0)
+      .setPosition(100, 100)
+      .setSize(200, 19)
+      ;
+  }
+
   color color_gui = color(255);
   color color_bgrd = color(20);
 
@@ -53,9 +71,9 @@ class GUI {
 
   void display_time(float x, float y) {
     float kx = 10, ky = 15;
-    float day = round(ts*tunit/60/24);
-    float hour = round(ts*tunit/60 % 24);
-    float minutes = round(ts*tunit % 60);
+    float day = round(date/60/24);
+    float hour = round(date/60 % 24);
+    float minutes = round(date % 60);
 
     pushMatrix();
     translate(x, y);
@@ -99,9 +117,6 @@ class GUI {
   }
 
   void display_legend_state(float x, float y) {
-    //color[] colors_legend = new color[]{color_healthy, color_infected, color_incubated, color_symptoms, color_alerted, color_retired, color_reported, color_quarantined};
-    //String[] colors_text = new String[]{"Healthy", "Infected", "Incubating", "With Symptoms", "Alerted", "Retired", "Report", "Quarantine"};
-
     color[] colors_legend = new color[]{color_healthy, color_infected, color_incubated, color_symptoms};
     String[] colors_text = new String[]{"Healthy", "Infected", "Incubating", "Symptoms"};
     for (int i=0; i < colors_legend.length; i++) {

@@ -5,7 +5,7 @@ class State {
   PVector cell_home, cell_hospital;
   int cell_home_id, cell_hospital_id;
 
-  long period_incubation = 7*24*60 / tunit, period_symptoms = 5*24*60 / tunit, period_report = 2*60 / tunit, period_retire = 2*60 / tunit, period_quarantine = 14*24*60 / tunit;  
+  long period_incubation = 7*24*60, period_symptoms = 5*24*60, period_report = 2*60, period_retire = 2*60, period_quarantine = 14*24*60;  
   float prob_symptoms, prob_retire, prob_report;
   boolean flag_symptoms, flag_retired, flag_reported, flag_alerted, flag_quarantined = false;
 
@@ -14,7 +14,6 @@ class State {
   }
 
   void init() {
-    println(period_incubation);
     this.prob_symptoms = 1; // probability of having symptoms after being infected
     this.prob_retire = 1; // probability of a symptomatic person to retire to their home
     this.prob_report = 1; // probability of a symptomatic person to report their status
@@ -76,13 +75,13 @@ class State {
   }
 
   void update_incubated() {
-    if ( this.infected && (ts - this.ts_infection > this.period_incubation) && !this.incubated) {
+    if ( this.infected && (ts - this.ts_infection > this.period_incubation/gui.tunit) && !this.incubated) {
       this.set_incubated();
     }
   }
 
   void update_symptoms() {
-    if (this.incubated && (ts - this.ts_incubated > this.period_symptoms) && !this.symptoms && !this.flag_symptoms) {
+    if (this.incubated && (ts - this.ts_incubated > this.period_symptoms/gui.tunit) && !this.symptoms && !this.flag_symptoms) {
       if (flip(this.prob_symptoms)) {
         this.set_symptoms();
       }
@@ -91,7 +90,7 @@ class State {
   }
 
   void update_retired() {
-    if (this.symptoms && (ts - this.ts_symptoms > this.period_retire) && !this.retired && !this.flag_retired) {
+    if (this.symptoms && (ts - this.ts_symptoms > this.period_retire/gui.tunit) && !this.retired && !this.flag_retired) {
       if (flip(this.prob_retire)) {
         this.set_retired();
       }
@@ -100,7 +99,7 @@ class State {
   }
 
   void update_reported() {
-    if (this.symptoms && (ts - this.ts_symptoms > this.period_report) && !this.reported && !this.flag_reported) {
+    if (this.symptoms && (ts - this.ts_symptoms > this.period_report/gui.tunit) && !this.reported && !this.flag_reported) {
       if (flip(this.prob_report)) {
         this.set_reported();
       }
@@ -134,7 +133,7 @@ class State {
   }
 
   void update_quarantine() {
-    if (this.quarantined && !this.symptoms && this.cell_home != null && (ts - this.ts_quarantined > this.period_quarantine)) {
+    if (this.quarantined && !this.symptoms && this.cell_home != null && (ts - this.ts_quarantined > this.period_quarantine/gui.tunit)) {
       this.init();
       this.flag_quarantined = true;
       grid_home.free(this.cell_home_id);

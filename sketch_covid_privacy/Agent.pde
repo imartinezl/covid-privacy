@@ -77,7 +77,7 @@ class Agent {
   int switch_cont;
   PVector new_env_pos;
   void switch_env() {
-    float hour = ts * tunit / 60.0 % 24.0;
+    float hour = date / 60.0 % 24.0;
     if (hour == 0) switch_cont = int(!this.resting);
     if (hour > ts_env_switch && !this.env_switch && switch_cont < 2) {
       this.resting = !this.resting;
@@ -151,7 +151,7 @@ class Agent {
     ArrayList <Agent> neighbors = new ArrayList <Agent> ();
     this.env.query(this, neighbors);
 
-    int period_infection = 60 / tunit , period_connection = 1 / tunit, period_delete =  2*7*24*60/ tunit; //minutes
+    int period_infection = 600 / gui.tunit , period_connection = 1 / gui.tunit, period_delete =  2*7*24*60/ gui.tunit; //minutes
     this.delete_register(period_delete);
     for (Agent agent : neighbors) {
       if ( agent != this) {
@@ -219,6 +219,7 @@ class Agent {
   }
 
   void display_state() {
+    //if(id == 0) println(ts, this.state.ts_infection, this.state.period_incubation/gui.tunit);
     color c = gui.color_healthy;  
     if (this.state.infected) c = gui.color_infected;
     if (this.state.incubated) c = gui.color_incubated;

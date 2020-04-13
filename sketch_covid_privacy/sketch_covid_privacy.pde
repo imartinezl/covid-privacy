@@ -1,6 +1,6 @@
 GUI gui = new GUI();
 
-long ts; int tunit;
+long ts, date; int tunit;
 ArrayList<Agent> agents;
 ArrayList<Environment> envs;
 ArrayList<Rectangle> bnds;
@@ -11,9 +11,12 @@ Server server;
 PrintWriter output; 
 boolean save_result = false;
 
+
+
 void init() {
   ts = 0;
-  tunit = 10; // time unit: minutes
+  date = 0;
+  tunit = gui.tunit; // time unit: minutes
   envs = new ArrayList<Environment>();
   bnds = new ArrayList<Rectangle>();
 
@@ -60,10 +63,17 @@ void init_environments() {
     envs.add(env);
   }
 }
+void reset(){
+  init();
+  init_boundaries();
+  init_environments();
+}
 
 void setup() {
   size(1200, 800);
-  gui.cp5 = new ControlP5(this);
+  gui.cp5 = new ControlP5(this).setPosition(800,300);
+  gui.control();
+  
   if (save_result) {
     output = createWriter("result.txt"); 
     output.println("ts,agent_A,agent_B,dist");
@@ -79,7 +89,6 @@ void setup() {
 
 void draw() {
   background(gui.color_bgrd);
-
   if (mousePressed) gui.mouse_pressed();
 
   // grids
@@ -116,6 +125,7 @@ void draw() {
   }
   if (agents.size() > 0) {
     ts++;
+    date += tunit;
   }
   gui.display();
 
