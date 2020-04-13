@@ -60,12 +60,13 @@ class Particle {
   }
 
   void random_move() {
-    this.vel = new PVector(random(-this.max_speed, this.max_speed), random(-this.max_speed, this.max_speed));
+    this.vel = PVector.fromAngle(random(2*PI));
+    //this.vel = new PVector(random(-1,1), random(-this.max_speed, this.max_speed));
   }
   
   void set_max_speed(float max_speed){
     this.max_speed = max_speed;
-    this.random_move();
+    this.vel.setMag(this.max_speed);
   }
 
   void bnd_edges() {

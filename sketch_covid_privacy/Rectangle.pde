@@ -51,7 +51,7 @@ class Rectangle {
 
   void display(color c, float r) {
     stroke(c);
-    strokeWeight(1);
+    strokeWeight(2);
     noFill();
     rectMode(CENTER);
     rect(this.x, this.y, this.w*2, this.h*2, r);
