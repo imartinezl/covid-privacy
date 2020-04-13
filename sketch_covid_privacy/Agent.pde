@@ -6,7 +6,8 @@ class Agent {
   Environment env, residential_env, industrial_env;
   State state;
 
-  float prob_app, prob_bt, prob_transmission, ts_env_switch;
+  float ts_env_switch;
+  //float prob_app, prob_bt, prob_transmission;
   boolean has_app, flag_reported = false, env_switch = false, flag_quarantined = true, resting;
   //float r0_mean = 2.28, r0_q95 = 0.28; // https://www.ncbi.nlm.nih.gov/pubmed/32097725
 
@@ -21,10 +22,10 @@ class Agent {
   }
 
   void init() {
-    this.prob_app = 1; // probability of having the app installed
-    this.prob_bt = 1; // probability that the bluetooth detects all phones around
-    this.prob_transmission = 1; // probability of transmission by being within radar
-    this.has_app = flip(prob_app);
+    //this.prob_app = 1; // probability of having the app installed
+    //this.prob_bt = 1; // probability that the bluetooth detects all phones around
+    //this.prob_transmission = 1; // probability of transmission by being within radar
+    this.has_app = flip(gui.prob_app);
 
     this.select_initial_env();
     this.select_current_env();
@@ -44,7 +45,6 @@ class Agent {
         }
       }
     }
-    switch_cont = int(!this.resting);
   }
 
   Environment select_other_env(int type) {
@@ -70,21 +70,19 @@ class Agent {
     this.ts_env_switch = this.env.ts_switch();
     this.particle.set_bnd(this.env.bnd);
     this.particle.set_max_speed(this.env.params.max_speed);
+    this.particle.random_move();
     this.hm_ts = new Sequence();
     this.hm_bt = new Sequence();
   }
 
-  int switch_cont;
   PVector new_env_pos;
   void switch_env() {
     float hour = date / 60.0 % 24.0;
-    if (hour == 0) switch_cont = int(!this.resting);
-    if (hour > ts_env_switch && !this.env_switch && switch_cont < 2) {
+    if (hour >= this.env.params.ts_start && hour <= this.env.params.ts_stop && hour > ts_env_switch) {
       this.resting = !this.resting;
       this.select_current_env();
       this.new_env_pos = this.env.bnd.random_pos();
       this.env_switch = true;
-      switch_cont++;
     }
   }
 
@@ -113,8 +111,10 @@ class Agent {
         this.particle.random_move();
       }
     } else {
+      particle.set_max_speed(env.params.max_speed);
       particle.bnd_edges();
-    } 
+    }
+
     particle.move();
   }
 
@@ -151,13 +151,15 @@ class Agent {
     ArrayList <Agent> neighbors = new ArrayList <Agent> ();
     this.env.query(this, neighbors);
 
-    int period_infection = 600 / gui.tunit , period_connection = 1 / gui.tunit, period_delete =  2*7*24*60/ gui.tunit; //minutes
+    int period_infection = gui.period_infection / gui.tunit; //minutes
+    int period_connection = gui.period_connection / gui.tunit; //minutes
+    int period_delete =  gui.period_delete*7*24*60/ gui.tunit; //days
     this.delete_register(period_delete);
     for (Agent agent : neighbors) {
       if ( agent != this) {
 
-        if (this.has_app) {
-          if (flip(prob_bt)) {
+        if (this.has_app) { // and if(this.resting = false) only monitor in working place
+          if (flip(gui.prob_bt)) {
             hm_bt.update(agent.id);
             if (hm_bt.get_value(agent.id) >= period_connection) {
               this.write_register(agent.id, distance(agent));
@@ -168,7 +170,7 @@ class Agent {
 
         if (this.state.infected && !this.state.retired) {
           hm_ts.update(agent.id);
-          if (hm_ts.get_value(agent.id) >= period_infection && flip(prob_transmission) && !agent.state.infected) {
+          if (hm_ts.get_value(agent.id) >= period_infection && flip(gui.prob_transmission) && !agent.state.infected) {
             agent.state.set_infected();
             hm_ts.delete(agent.id);
           }
@@ -186,7 +188,7 @@ class Agent {
   void delete_register(int period_delete) {   
     for (int i = register.size() - 1; i >= 0; i--) {
       Contact c = register.get(i);
-      if(ts - c.ts > period_delete){
+      if (ts - c.ts > period_delete) {
         register.remove(i);
       }
     }
