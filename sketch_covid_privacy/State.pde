@@ -5,7 +5,7 @@ class State {
   PVector cell_home, cell_hospital;
   int cell_home_id, cell_hospital_id;
 
-  long period_incubation = 7*24*60, period_symptoms = 5*24*60, period_report = 2*60, period_retire = 2*60, period_quarantine = 14*24*60;  
+  float period_incubation, period_symptoms, period_report, period_retire, period_quarantine;  
   float prob_symptoms, prob_retire, prob_report;
   boolean flag_symptoms, flag_retired, flag_reported, flag_alerted, flag_quarantined = false;
 
@@ -14,10 +14,8 @@ class State {
   }
 
   void init() {
-    this.prob_symptoms = 1; // probability of having symptoms after being infected
-    this.prob_retire = 1; // probability of a symptomatic person to retire to their home
-    this.prob_report = 1; // probability of a symptomatic person to report their status
-
+    this.init_params();
+    
     this.infected = false;
     this.incubated = false;
     this.symptoms = false;
@@ -33,6 +31,19 @@ class State {
 
     this.cell_home = null;
     this.cell_hospital = null;
+  }
+  
+  void init_params(){
+    this.prob_symptoms = gui.prob_symptoms; // probability of having symptoms after being infected
+    this.prob_retire = gui.prob_retire; // probability of a symptomatic person to retire to their home
+    this.prob_report = gui.prob_report; // probability of a symptomatic person to report their status
+
+    this.period_incubation = gui.period_incubation*24*60;
+    this.period_symptoms = gui.period_symptoms*24*60;
+    this.period_report = gui.period_report*24*60;
+    this.period_retire = gui.period_retire*24*60;
+    this.period_quarantine = gui.period_quarantine*24*60;  
+
   }
 
   void set_infected() {
@@ -142,6 +153,7 @@ class State {
 
 
   void update() {
+    this.init_params();
     this.update_incubated();
     this.update_symptoms();
     this.update_retired();
