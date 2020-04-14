@@ -150,10 +150,9 @@ class Agent {
   void interact() {
     ArrayList <Agent> neighbors = new ArrayList <Agent> ();
     this.env.query(this, neighbors);
-
-    int period_infection = gui.period_infection / gui.tunit; //minutes
-    int period_connection = gui.period_connection / gui.tunit; //minutes
-    int period_delete =  gui.period_delete*7*24*60/ gui.tunit; //days
+    int period_infection = int(gui.period_infection / gui.tunit); //minutes
+    int period_connection = int(gui.period_connection / gui.tunit); //minutes
+    int period_delete =  int(gui.period_delete)*24*60/ gui.tunit; //days
     this.delete_register(period_delete);
     for (Agent agent : neighbors) {
       if ( agent != this) {
@@ -229,7 +228,7 @@ class Agent {
     fill(c);
     noStroke();
     //if (this.has_app) stroke(255);
-    circle(this.particle.pos.x, this.particle.pos.y, 4);
+    circle(this.particle.pos.x, this.particle.pos.y, 4*2);
   }
 
   void display_comm() {
@@ -242,14 +241,18 @@ class Agent {
       fill(c);
       noStroke();
       //if (this.has_app) stroke(255);
-      circle(this.particle.pos.x, this.particle.pos.y, 7);
+      circle(this.particle.pos.x, this.particle.pos.y, 5*2);
     }
   }
 
   float r = 0.0, rp = 0.2;
   void display_radar() {
+    color c = gui.color_healthy;  
+    if (this.state.infected) c = gui.color_infected;
+    if (this.state.incubated) c = gui.color_incubated;
+    if (this.state.symptoms) c = gui.color_symptoms;
     noFill();
-    stroke(255, 255*(1-r/this.particle.r));
+    stroke(c, 255*(1-r/this.particle.r));
     strokeWeight(1);
     circle(particle.pos.x, this.particle.pos.y, r*2);
     r += rp;
