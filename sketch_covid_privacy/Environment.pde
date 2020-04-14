@@ -67,14 +67,32 @@ class Env_Params {
   }
 
   void display_time(float x, float y) {
-    int kx = 10, ky = 10;
+    int kx = 13, ky = 15;
+    
+    float m = this.ts_stop-this.ts_start;
 
     pushMatrix();
     translate(x, y);
+    translate(20, 40);
     fill(this.c);
     noStroke();
     rectMode(CORNER);
-    rect(this.ts_start*kx, ky/4, (this.ts_stop-this.ts_start)*kx, ky);
+    rect(this.ts_start*kx, ky/4, m*kx, ky);
+    
+    noFill();
+    stroke(this.c);
+    strokeWeight(2);
+    line((this.ts_start+m/2)*kx, 5*ky/4, (this.ts_start+m/2)*kx, 4*ky);
+    
+    fill(this.c);
+    rectMode(CENTER);
+    rect((this.ts_start+m/2)*kx, 9*ky/2, 7*name.length(), ky, 4);
+    
+    fill(gui.color_gui);
+    textAlign(CENTER, CENTER);
+    textSize(12);
+    text(this.name,(this.ts_start+m/2)*kx, 4.25*ky); 
+    
     popMatrix();
   }
 }

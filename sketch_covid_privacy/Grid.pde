@@ -63,7 +63,7 @@ class Grid {
   void display_title(){
     fill(gui.color_gui);
     stroke(gui.color_gui);
-    textSize(10);
+    textSize(15);
     textAlign(LEFT, BOTTOM);
     text(title, this.pos.x, this.pos.y);
   }
