@@ -152,6 +152,14 @@ void draw() {
     agent.display();
     //agent.interact(); BAD
   }
+  //if(agents.size() > 0){
+  //for(int i=0; i < 300; i++){
+  //   int id = int(random(agents.size()));
+  //   Agent agent = agents.get(id);
+  //   agent.display();
+  //}
+  //}
+  
   for (Agent agent : agents) {
     agent.interact();
   }
