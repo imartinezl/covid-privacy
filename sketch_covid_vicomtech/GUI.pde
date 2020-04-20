@@ -33,25 +33,25 @@ class GUI {
   void cp5_accordion() {
     g1 = cp5.addGroup("myGroup1")
       .setBackgroundColor(color(0, 64))
-      .setBackgroundHeight(100)
+      .setBackgroundHeight(90)
       .setCaptionLabel("Simulation")
       .setBarHeight(15)
       ;
     g2 = cp5.addGroup("myGroup2")
       .setBackgroundColor(color(0, 64))
-      .setBackgroundHeight(40)
+      .setBackgroundHeight(80)
       .setCaptionLabel("Environments")
       .setBarHeight(15)
       ;
     g3 = cp5.addGroup("myGroup3")
       .setBackgroundColor(color(0, 64))
-      .setBackgroundHeight(120)
+      .setBackgroundHeight(180)
       .setCaptionLabel("Periods")
       .setBarHeight(15)
       ;
     g4 = cp5.addGroup("myGroup4")
       .setBackgroundColor(color(0, 64))
-      .setBackgroundHeight(80)
+      .setBackgroundHeight(130)
       .setCaptionLabel("Probabilities")
       .setBarHeight(15)
       ;
@@ -61,14 +61,15 @@ class GUI {
     //  .setSize(12);
     accordion = cp5.addAccordion("acc")
       //.setPosition(40, 40)
-      .setWidth(300) 
+      .setWidth(350) 
+      .setMinItemHeight(0)
       .addItem(g1)
       .addItem(g2)
       .addItem(g3)
       .addItem(g4)
       ;
 
-    accordion.open(0, 1, 2, 3);
+    accordion.open(0, 2, 3);
     accordion.setCollapseMode(Accordion.MULTI);
   }
 
@@ -78,6 +79,7 @@ class GUI {
       .plugTo(this)
       .moveTo(g1)
       .setPosition(10, 10)
+      .setSize(130, 20)
       .setRange(1, 10)
       .setValue(1)
       .setNumberOfTickMarks(10)
@@ -87,7 +89,7 @@ class GUI {
     cp5.addButton("reset")
       .plugTo(this)
       .moveTo(g1)
-      .setPosition(155, 5)
+      .setPosition(180, 10)
       .setSize(40, 20)
       ;
 
@@ -104,8 +106,8 @@ class GUI {
     cp5.addNumberbox("env_n")
       .plugTo(this)
       .moveTo(g1)
-      .setPosition(80, 40)
-      .setSize(100, 20)
+      .setPosition(90, 40)
+      .setSize(50, 20)
       .setMultiplier(0.1)
       .setRange(4, 49)
       .setValue(16)
@@ -118,7 +120,7 @@ class GUI {
       // disable broadcasting since setRange and setRangeValues will trigger an event
       .setBroadcast(false) 
       .setPosition(10, 20)
-      .setSize(150, 20)
+      .setSize(190, 20)
       .setHandleSize(10)
       .setRange(0, 24)
       .setDecimalPrecision(0)
@@ -136,7 +138,7 @@ class GUI {
       // disable broadcasting since setRange and setRangeValues will trigger an event
       .setBroadcast(false) 
       .setPosition(10, 40)
-      .setSize(150, 20)
+      .setSize(190, 20)
       .setHandleSize(10)
       .setRange(0, 24)
       .setDecimalPrecision(0)
@@ -155,6 +157,7 @@ class GUI {
       .plugTo(this)
       .moveTo(g3)
       .setPosition(10, 10)
+      .setSize(190, 15)
       .setRange(1, 21)
       .setValue(7)
       .setNumberOfTickMarks(21)
@@ -165,7 +168,8 @@ class GUI {
     cp5.addSlider("period_symptoms")
       .plugTo(this)
       .moveTo(g3)
-      .setPosition(10, 20)
+      .setPosition(10, 30)
+      .setSize(190, 15)
       .setRange(1, 21)
       .setValue(5)
       .setNumberOfTickMarks(21)
@@ -176,7 +180,8 @@ class GUI {
     cp5.addSlider("period_report")
       .plugTo(this)
       .moveTo(g3)
-      .setPosition(10, 30)
+      .setPosition(10, 50)
+      .setSize(190, 15)
       .setRange(1, 21)
       .setValue(2)
       .setNumberOfTickMarks(21)
@@ -187,7 +192,8 @@ class GUI {
     cp5.addSlider("period_retire")
       .plugTo(this)
       .moveTo(g3)
-      .setPosition(10, 40)
+      .setPosition(10, 70)
+      .setSize(190, 15)
       .setRange(1, 21)
       .setValue(2)
       .setNumberOfTickMarks(21)
@@ -199,7 +205,8 @@ class GUI {
     cp5.addSlider("period_quarantine")
       .plugTo(this)
       .moveTo(g3)
-      .setPosition(10, 50)
+      .setPosition(10, 90)
+      .setSize(190, 15)
       .setRange(1, 21)
       .setValue(14)
       .setNumberOfTickMarks(21)
@@ -211,6 +218,7 @@ class GUI {
       .plugTo(this)
       .moveTo(g4)
       .setPosition(10, 10)
+      .setSize(190, 15)
       .setRange(0, 1)
       .setValue(1)
       .setNumberOfTickMarks(11)
@@ -221,7 +229,8 @@ class GUI {
     cp5.addSlider("prob_retire")
       .plugTo(this)
       .moveTo(g4)
-      .setPosition(10, 20)
+      .setPosition(10, 30)
+      .setSize(190, 15)
       .setRange(0, 1)
       .setValue(1)
       .setNumberOfTickMarks(11)
@@ -231,7 +240,8 @@ class GUI {
     cp5.addSlider("prob_report")
       .plugTo(this)
       .moveTo(g4)
-      .setPosition(10, 30)
+      .setPosition(10, 50)
+      .setSize(190, 15)
       .setRange(0, 1)
       .setValue(1)
       .setNumberOfTickMarks(11)
@@ -245,7 +255,8 @@ class GUI {
     cp5.addSlider("period_delete")
       .plugTo(this)
       .moveTo(g3)
-      .setPosition(10, 60)
+      .setPosition(10, 110)
+      .setSize(190, 15)
       .setRange(1, 21)
       .setValue(14)
       .setNumberOfTickMarks(21)
@@ -256,7 +267,8 @@ class GUI {
     cp5.addSlider("period_infection")
       .plugTo(this)
       .moveTo(g3)
-      .setPosition(10, 80)
+      .setPosition(10, 130)
+      .setSize(190, 15)
       .setRange(1, 20)
       .setValue(10)
       .setNumberOfTickMarks(20)
@@ -267,7 +279,8 @@ class GUI {
     cp5.addSlider("period_connection")
       .plugTo(this)
       .moveTo(g3)
-      .setPosition(10, 90)
+      .setPosition(10, 150)
+      .setSize(190, 15)
       .setRange(1, 20)
       .setValue(10)
       .setNumberOfTickMarks(20)
@@ -279,7 +292,8 @@ class GUI {
     cp5.addSlider("prob_app")
       .plugTo(this)
       .moveTo(g4)
-      .setPosition(10, 40)
+      .setPosition(10, 70)
+      .setSize(190, 15)
       .setRange(0, 1)
       .setValue(1)
       .setNumberOfTickMarks(11)
@@ -290,7 +304,8 @@ class GUI {
     cp5.addSlider("prob_bt")
       .plugTo(this)
       .moveTo(g4)
-      .setPosition(10, 50)
+      .setPosition(10, 90)
+      .setSize(190, 15)
       .setRange(0, 1)
       .setValue(1)
       .setNumberOfTickMarks(11)
@@ -300,7 +315,8 @@ class GUI {
     cp5.addSlider("prob_transmission")
       .plugTo(this)
       .moveTo(g4)
-      .setPosition(10, 60)
+      .setPosition(10, 110)
+      .setSize(190, 15)
       .setRange(0, 1000)
       .setValue(7)
       .setNumberOfTickMarks(1001)
@@ -538,6 +554,30 @@ class GUI {
       stroke(255, 50);
       line(rectA.x, rectA.y, rectB.x, rectB.y);
     }
+  }
+
+  void display_grid() {
+    stroke(100, 100);
+    strokeWeight(0.5);
+    int h = 20;
+    for (int i=0; i < width/h; i++) {
+      line(i*h, 0, i*h, height);
+    }
+    for (int i=0; i < height/h; i++) {
+      line(0, i*h, width, i*h);
+    }
+  }
+
+  void display_plans() {
+    pushMatrix();
+    translate(wa+m, m);
+    image(plan_A, 150, 0);
+    image(plan_B, 550, 0);
+    image(plan_C, 600, 500);
+    image(plan_D, 0, 550);
+    image(plan_E, 300, 550);
+
+    popMatrix();
   }
 
   void display() {
