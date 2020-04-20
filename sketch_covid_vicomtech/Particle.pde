@@ -14,6 +14,10 @@ class Particle {
   void set_bnd(Rectangle bnd){
     this.bnd = bnd;
   }
+  
+  void set_max_speed(float max_speed){
+    this.max_speed = max_speed;
+  }
 
   float distance(Particle p) {
     return dist(this.pos.x, this.pos.y, p.pos.x, p.pos.y);
@@ -43,6 +47,7 @@ class Particle {
   }
   
   void move_to(PVector goal, float step){
+    this.set_max_speed(step);
     this.vel.mult(0);
     if(dist(goal.x, goal.y, this.pos.x, this.pos.y) > step){
       PVector dir = PVector.sub(goal, this.pos);
@@ -60,7 +65,8 @@ class Particle {
     this.acc.mult(0);
   }
 
-  void random_move() {
+  void random_move(float speed) {
+    this.set_max_speed(speed);
     //this.vel = PVector.fromAngle(random(2*PI));
     this.vel = new PVector(random(-this.max_speed, this.max_speed), random(-this.max_speed, this.max_speed));
   }
