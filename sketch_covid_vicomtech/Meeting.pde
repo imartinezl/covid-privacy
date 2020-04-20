@@ -34,6 +34,7 @@ class Meeting {
 
 void init_meetings() {
   int n_meetings = 10;
+  meetings.clear();
   for (int i=0; i < n_meetings; i++) {
     // people
     ArrayList<Agent> participants = new ArrayList<Agent>();

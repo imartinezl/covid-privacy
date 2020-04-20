@@ -87,7 +87,7 @@ class Env_Params {
     rect(this.ts_start*kx, ky/4, m*kx, ky);
     
     int e = 0;
-    if(name == "Room") e = 40;
+    if(name == "Room") e = 30;
     
     noFill();
     stroke(this.c);
@@ -122,4 +122,18 @@ void init_environments() {
     if (flip(prob_office)) offices.add(env);
     else rooms.add(env);
   }
+}
+
+
+void init_custom_environments(){
+  for(int i=0; i < bnds.size(); i++){
+    Env_Params params;
+    if (bnd_type.get(i) == 0) params = office;
+    else params = room;
+    Environment env = new Environment(bnds.get(i), params);
+    envs.add(env);
+    if (bnd_type.get(i) == 0) offices.add(env);
+    else rooms.add(env);
+  }
+  
 }
