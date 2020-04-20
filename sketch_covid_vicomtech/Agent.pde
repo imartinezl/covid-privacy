@@ -7,6 +7,7 @@ class Agent {
   State state;
 
   float ts_env_switch, ts_arrive, ts_leave;
+  float walk_speed=2.0, run_speed = 30, stop_speed = 0.0;
   boolean has_app, flag_reported = false, flag_quarantined = true;
   ArrayList<Contact> register = new ArrayList<Contact>();
 
@@ -15,9 +16,6 @@ class Agent {
     this.particle = new Particle(x, y, r);
     this.state = new State();  
     select_office();
-
-    this.ts_arrive = 8 + random(0, 1);
-    this.ts_leave = 17.5 + random(-1, 0);
 
     this.init();
   }
@@ -35,8 +33,6 @@ class Agent {
     this.id = id;
     this.state = new State();    
     this.office = office;
-    this.ts_arrive = 8 + random(0, 1);
-    this.ts_leave = 17.5 + random(-1, 0);
 
     PVector pos  = this.office.random_pos();
     this.particle = new Particle(pos.x, pos.y, r);
@@ -46,56 +42,63 @@ class Agent {
 
   void init() {
     this.has_app = flip(gui.prob_app);
-    this.env = this.office;
-    this.select_current_env();
+    this.select_env(this.office);
+    this.ts_arrive = this.office.params.ts_start + random(0, 1);
+    this.ts_leave = this.office.params.ts_stop + random(-1, 0);
   }
 
-  void select_current_env() {
+  void select_env(Environment env) {
+    this.env = env;
     this.particle.set_bnd(this.env.bnd);
     this.hm_ts = new Sequence();
     this.hm_bt = new Sequence();
   }
 
-  PVector new_env_pos;
+
   boolean arrived = false, leaved = true;
   void control_env() {
     float hour = date / 60.0 % 24.0;
     if (hour >= ts_arrive && hour <= ts_leave && !arrived) {
-      this.env = this.office;
-      this.select_current_env();
+      this.select_env(office);
       this.new_env_pos = this.env.bnd.random_pos();
-      this.particle.max_speed = 1;
-      this.particle.random_move();
+      this.particle.random_move(walk_speed);
       this.arrived = true;
     } else if (hour >= ts_leave) {
-      this.particle.max_speed = 0;
+      this.particle.random_move(stop_speed);
       this.arrived = false;
     }
   }
 
+  PVector new_env_pos;
+  boolean flag_goto = false;
+  void go_to(Environment envi) {
+    this.select_env(envi);
+    this.new_env_pos = envi.bnd.random_pos();
+    this.flag_goto = true;
+  }
+
   void move() { 
-    float switch_speed = 10;
     if (this.state.cell_home != null) {
-      particle.move_to(this.state.cell_home, switch_speed);
+      particle.move_to(this.state.cell_home, run_speed);
     } else if (this.state.cell_hospital != null) {
-      particle.move_to(this.state.cell_hospital, switch_speed);
+      particle.move_to(this.state.cell_hospital, run_speed);
     } else if (this.state.flag_quarantined) {
       if (this.flag_quarantined) {
-        this.select_current_env();
+        this.select_env(office);
         this.new_env_pos = env.bnd.random_pos();
         this.flag_quarantined = false;
       }
-      particle.move_to(this.new_env_pos, switch_speed);
+      particle.move_to(this.new_env_pos, run_speed);
       if (particle.pos == this.new_env_pos) {
         this.state.flag_quarantined = false;
-        this.particle.random_move();
+        this.particle.random_move(walk_speed);
       }
-      //} else if (this.env_switch) {
-      //  particle.move_to(this.new_env_pos, switch_speed);
-      //  if (particle.pos == this.new_env_pos) {
-      //    this.env_switch = false;
-      //    this.particle.random_move();
-      //  }
+    } else if (this.flag_goto) {
+      this.particle.move_to(this.new_env_pos, run_speed);
+      if (particle.pos == this.new_env_pos) {
+        this.flag_goto = false;
+        this.particle.random_move(walk_speed);
+      }
     } else {
       particle.bnd_edges();
     }
@@ -158,7 +161,7 @@ class Agent {
 
           if (this.state.infected && !this.state.retired) {
             hm_ts.update(agent.id);
-            if (hm_ts.get_value(agent.id) >= period_infection && flip(gui.prob_transmission) && !agent.state.infected) {
+            if (hm_ts.get_value(agent.id) >= period_infection && flip(gui.prob_transmission/1000) && !agent.state.infected) {
               agent.state.set_infected();
               hm_ts.delete(agent.id);
             }
@@ -255,6 +258,19 @@ class Agent {
     this.display_state();
     if (in_office && !this.state.retired && !this.state.quarantined && this.has_app) {
       this.display_radar();
+    }
+  }
+}
+
+
+
+float r = 15;
+void init_agents() {
+  for (Environment env : envs) {
+    if (env.params.type == 0) {
+      for (int i=0; i < 10; i++) {
+        server.signup(env, r);
+      }
     }
   }
 }

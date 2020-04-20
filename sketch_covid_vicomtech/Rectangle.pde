@@ -57,3 +57,31 @@ class Rectangle {
     rect(this.x, this.y, this.w*2, this.h*2, r);
   }
 }
+
+
+
+void init_boundaries() {
+  int ww = height - 2*gui.m, hh = ww;
+  if (gui.env_mode) {
+    // grid shape
+    float n = ceil(sqrt(gui.env_n)), m = 10, s = ww/n - m, off_w = gui.wb-ww+m;
+    int bnd_cont = 0;
+    for (int i=0; i < n; i++) {
+      for (int j=0; j < n; j++) {
+        bnds.add(new Rectangle(gui.wa + j*(s+m) + s/2 + off_w/2, gui.m + i*(s+m) + s/2 + m/2, s/2, s/2));
+        bnd_cont++;
+        if (bnd_cont >= gui.env_n) break;
+      }
+      if (bnd_cont >= gui.env_n) break;
+    }
+  } else {
+    // random shape
+    for (int i=0; i < gui.env_n; i++) {
+      float w = random(10, 50);
+      float h = random(10, 50);
+      float x = gui.wa + random(gui.m+w, ww-w-gui.m);
+      float y = random(gui.m+h, hh-h-gui.m);
+      bnds.add(new Rectangle(x, y, w, h));
+    }
+  }
+}

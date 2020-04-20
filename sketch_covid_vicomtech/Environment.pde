@@ -2,6 +2,7 @@ class Environment {
   QuadTree qt;
   Rectangle bnd;
   Env_Params params;
+  String name;
 
 
   Environment(Rectangle bnd, Env_Params params) {
@@ -33,6 +34,10 @@ class Environment {
   PVector random_pos(){
     return this.bnd.random_pos();
   }
+  
+  void set_name(String name){
+    this.name = name;
+  }
 }
 
 class Env_Params {
@@ -45,6 +50,7 @@ class Env_Params {
     this.type = type;
     this.hours = hours;
     this.c = c;
+    this.update();
   }
 
   void update() {
@@ -98,5 +104,22 @@ class Env_Params {
     text(this.name,(this.ts_start+m/2)*kx, 4.25*ky + e); 
     
     popMatrix();
+  }
+}
+
+
+
+
+void init_environments() {
+
+  float prob_office = 0.5;
+  for (Rectangle bnd : bnds) {
+    Env_Params params;
+    if (flip(prob_office)) params = office;
+    else params = room;
+    Environment env = new Environment(bnd, params);
+    envs.add(env);
+    if (flip(prob_office)) offices.add(env);
+    else rooms.add(env);
   }
 }
