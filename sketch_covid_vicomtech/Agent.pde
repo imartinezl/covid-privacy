@@ -218,7 +218,7 @@ class Agent {
     if (this.state.infected) c = gui.color_infected;
     if (this.state.incubated) c = gui.color_incubated;
     if (this.state.symptoms) c = gui.color_symptoms;
-    if (!this.in_office) c = gui.color_gray;
+    if (!this.in_office) c = color(c, 180); //gui.color_gray;
     fill(c);
     noStroke();
     circle(this.particle.pos.x, this.particle.pos.y, 4*2);
@@ -230,7 +230,7 @@ class Agent {
     if (this.state.reported) c = gui.color_reported;
     //if (this.state.retired) c = gui.color_retired;
     //if (this.state.quarantined) c = gui.color_quarantined;
-    if (!this.in_office) c = gui.color_gray;
+    if (!this.in_office) c = color(c, 180); //gui.color_gray;
     if ( c != gui.color_bgrd) {
       fill(c);
       noStroke();
@@ -268,7 +268,9 @@ float r = 15;
 void init_agents() {
   for (Environment env : envs) {
     if (env.params.type == 0) {
-      for (int i=0; i < 10; i++) {
+      float area = env.bnd.w*env.bnd.h;
+      int n_agents = int(map(area, 300, 3000, 1, 10));
+      for (int i=0; i < n_agents; i++) {
         server.signup(env, r);
       }
     }
