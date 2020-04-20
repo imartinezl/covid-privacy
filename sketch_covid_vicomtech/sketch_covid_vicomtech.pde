@@ -14,7 +14,7 @@ GUI gui = new GUI();
 PrintWriter output; 
 boolean save_result = false;
 
-PImage logo;
+PImage logo, plan_A, plan_B, plan_C, plan_D, plan_E;
 PFont font;
 
 void init() {
@@ -40,8 +40,10 @@ void init() {
 
 void reset() {
   init();
-  init_boundaries();
-  init_environments();
+  //init_boundaries();
+  init_custom_boundaries();
+  //init_environments();
+  init_custom_environments();
   init_agents();
   init_meetings();
 }
@@ -52,11 +54,25 @@ void setup() {
   font = createFont("Poppins-Regular.ttf", 20, true);
   textFont(font);
   logo = loadImage("LOGO_BRTA.png");
+  float scl = 0.6;
+  plan_A = loadImage("SalasReuniones57_A-min.png");
+  plan_A.resize(int(plan_A.width*scl), int(plan_A.height*scl));
+  plan_B = loadImage("SalasReuniones57_B-min.png");
+  plan_B.resize(int(plan_B.width*scl), int(plan_B.height*scl));
+  scl = 0.5;
+  plan_C = loadImage("SalasReuniones71_A-min.png");
+  plan_C.resize(int(plan_C.width*scl), int(plan_C.height*scl));
+  scl = 0.6;
+  plan_D = loadImage("SalasReuniones63_A-min.png");
+  plan_D.resize(int(plan_D.width*scl), int(plan_D.height*scl));
+  plan_E = loadImage("SalasReuniones63_B-min.png");
+  plan_E.resize(int(plan_E.width*scl), int(plan_E.height*scl));
+
 
   // layout
   gui.setup_layout();
 
-  gui.cp5 = new ControlP5(this).setPosition(gui.m, 590);
+  gui.cp5 = new ControlP5(this).setPosition(gui.m + 20, 590);
   gui.cp5_control();
 
   if (save_result) {
@@ -72,10 +88,12 @@ void draw() {
   if (mousePressed) gui.mouse_pressed();
 
   //layout
+  //gui.display_grid();
   gui.display_layout();
   gui.display_title(gui.m, gui.m);
   gui.display_info(gui.m, height-gui.m);
   gui.display_cp5_title(gui.m, 570);
+  gui.display_plans();
 
   // grids
   grid_hospital.update();
@@ -86,8 +104,9 @@ void draw() {
   // environments
   for (Environment env : envs) {
     env.init_qt();
-    env.display();
+    //env.display();
   }
+  
   // time
   float px = gui.m, py = gui.m + 350;
   office.display_time(px, py);
@@ -106,6 +125,7 @@ void draw() {
   room.update();
   
   // meetings
+  if(date % (60*24) < tunit) init_meetings();
   for(Meeting m: meetings){
     m.update();
   }
@@ -121,6 +141,7 @@ void draw() {
   }
   ts++;
   date += tunit;
+ 
 }
 
 
