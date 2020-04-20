@@ -39,7 +39,7 @@ class GUI {
       ;
     g2 = cp5.addGroup("myGroup2")
       .setBackgroundColor(color(0, 64))
-      .setBackgroundHeight(100)
+      .setBackgroundHeight(40)
       .setCaptionLabel("Environments")
       .setBarHeight(15)
       ;
@@ -117,7 +117,7 @@ class GUI {
       .moveTo(g2)
       // disable broadcasting since setRange and setRangeValues will trigger an event
       .setBroadcast(false) 
-      .setPosition(10, 40)
+      .setPosition(10, 20)
       .setSize(150, 20)
       .setHandleSize(10)
       .setRange(0, 24)
@@ -135,7 +135,7 @@ class GUI {
       .moveTo(g2)
       // disable broadcasting since setRange and setRangeValues will trigger an event
       .setBroadcast(false) 
-      .setPosition(10, 60)
+      .setPosition(10, 40)
       .setSize(150, 20)
       .setHandleSize(10)
       .setRange(0, 24)
@@ -301,9 +301,9 @@ class GUI {
       .plugTo(this)
       .moveTo(g4)
       .setPosition(10, 60)
-      .setRange(0, 1)
-      .setValue(1)
-      .setNumberOfTickMarks(21)
+      .setRange(0, 1000)
+      .setValue(7)
+      .setNumberOfTickMarks(1001)
       .showTickMarks(false)
       //.linebreak()
       ;
@@ -332,7 +332,7 @@ class GUI {
       PVector pos = new PVector(mouseX + random(-10, 10), mouseY + random(-10, 10));
       for (Environment env : envs) {
         if (env.bnd.contains(pos)) {
-          server.signup(pos.x, pos.y, 15);
+          server.signup(pos.x, pos.y, r);
           if (mouseButton == RIGHT) {
             agents.get(agents.size()-1).state.set_infected();
           }
@@ -362,12 +362,23 @@ class GUI {
   void display_title(float x, float y) {
     pushMatrix();
     translate(x, y);
+
+    // logo
+    image(logo, 0, 0);
+    stroke(this.color_gui);
+    line(160, 0, 160, 70);
+
+    translate(420, 0);
+    // title
     fill(this.color_gui);
     noStroke();
-    textSize(40);
-    textAlign(LEFT, TOP);
-    textLeading(45);
+    textSize(24);
+    textAlign(RIGHT, TOP);
+    textLeading(35);
     text("Privacy-preserving\nContact-tracing", 0, 0);
+
+
+
     popMatrix();
   }
 
@@ -378,6 +389,7 @@ class GUI {
     noStroke();
     int txt_size = 12;
     textSize(txt_size);
+    textAlign(LEFT, TOP);
     String txt = "FPS: " + round(frameRate)  + "  # Agents: " + agents.size();
     text(txt, 0, 0);
     popMatrix();
