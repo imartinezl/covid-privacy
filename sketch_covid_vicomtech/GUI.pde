@@ -9,7 +9,7 @@ class GUI {
 
   int tunit, env_n;
   Range office_hours, room_hours;
-  boolean env_mode;
+  boolean env_mode, env_custom;
   void cp5_control() {
     this.cp5_accordion();
     this.cp5_setup();
@@ -91,14 +91,33 @@ class GUI {
       .moveTo(g1)
       .setPosition(180, 10)
       .setSize(40, 20)
+      .setCaptionLabel("RESET")
       ;
-
-    cp5.addToggle("env_mode")
+      
+    cp5.addButton("run")
+      .plugTo(this)
+      .moveTo(g1)
+      .setPosition(240, 10)
+      .setSize(40, 20)
+      .setCaptionLabel("START")
+      ;
+      
+    cp5.addToggle("env_custom")
       .plugTo(this)
       .moveTo(g1)
       .setPosition(10, 40)
       .setSize(50, 20)
       .setValue(true)
+      .setMode(ControlP5.SWITCH)
+      .setCaptionLabel("Env Custom")
+      ;
+      
+    cp5.addToggle("env_mode")
+      .plugTo(this)
+      .moveTo(g1)
+      .setPosition(90, 40)
+      .setSize(50, 20)
+      .setValue(false)
       .setMode(ControlP5.SWITCH)
       .setCaptionLabel("Env mode")
       ;
@@ -106,8 +125,8 @@ class GUI {
     cp5.addNumberbox("env_n")
       .plugTo(this)
       .moveTo(g1)
-      .setPosition(90, 40)
-      .setSize(50, 20)
+      .setPosition(180, 40)
+      .setSize(40, 20)
       .setMultiplier(0.1)
       .setRange(4, 49)
       .setValue(16)
@@ -341,13 +360,13 @@ class GUI {
   color color_alerted = color(0, 77, 255);
   color color_retired = color(120, 120, 120);
   color color_reported = color(0, 255, 0);
-  color color_quarantined = color(120, 120, 120);
+  color color_quarantined = color(255, 0, 255);
 
   void mouse_pressed() {
-    for (int i=0; i < 5; i++) {
+    for (int i=0; i < 1; i++) {
       PVector pos = new PVector(mouseX + random(-10, 10), mouseY + random(-10, 10));
       for (Environment env : envs) {
-        if (env.bnd.contains(pos)) {
+        if (env.bnd.contains(pos) && env.params.type==0) {
           server.signup(pos.x, pos.y, r);
           if (mouseButton == RIGHT) {
             agents.get(agents.size()-1).state.set_infected();
@@ -411,13 +430,6 @@ class GUI {
     popMatrix();
   }
 
-  void display_state_distribution(float x, float y) {
-    pushMatrix();
-    translate(x, y);
-
-    popMatrix();
-  }
-
   void display_time(float x, float y) {
     float kx = 13, ky = 20;
     float day = round(date/60/24);
@@ -436,7 +448,7 @@ class GUI {
     textSize(16);
     text("Timeline", 5, -5);
 
-    translate(20, 40);
+    translate(20, 50);
 
     // timeline
     stroke(this.color_gui);
@@ -543,6 +555,119 @@ class GUI {
       text(colors_text[i], s, 0);
       popMatrix();
     }
+  }
+
+  FloatList n_healthy_list = new FloatList(), n_infected_list = new FloatList(), n_incubated_list = new FloatList();
+  FloatList n_symptoms_list = new FloatList(), n_quarantined_list = new FloatList(), n_retired_list = new FloatList(), n_total_list = new FloatList();
+  int n_states;
+  void display_state(float x, float y) {
+    int n_max = 110;
+
+    float hour = date / 60.0 % 24.0, n_total = agents.size();
+    boolean in_office = hour > office.ts_start && hour < office.ts_stop;
+    if (true) {
+      n_states++;
+      if (n_states >= n_max) {
+        n_states--;
+        n_total_list.remove(0);
+        n_healthy_list.remove(0);
+        n_infected_list.remove(0);
+        n_incubated_list.remove(0);
+        n_symptoms_list.remove(0);
+        n_quarantined_list.remove(0);
+        n_retired_list.remove(0);
+      }
+      n_total_list.append(n_total);
+      n_healthy_list.append(n_healthy);
+      n_infected_list.append(n_infected);
+      n_incubated_list.append(n_incubated);
+      n_symptoms_list.append(n_symptoms);
+      n_quarantined_list.append(n_quarantined);
+      n_retired_list.append(n_retired);
+    }
+
+    pushMatrix();
+    translate(x, y);
+
+    // title
+    stroke(this.color_gui, 200);
+    strokeWeight(1);
+    line(0, 0, wc-2*m, 0);
+    fill(this.color_gui);
+    textAlign(LEFT, BOTTOM);
+    textSize(16);
+    text("Status", 5, -5);
+
+    pushMatrix();
+    translate(0, 20);
+
+    float h = 490, w = 2;
+    stroke(color_gui);
+    for (int i=0; i <= 10; i++) {
+      //line(w+2, i*h/10, w+4, i*h/10); 
+      //line(-2, i*h/10, -4, i*h/10);
+    }
+    textSize(12);
+    textAlign(LEFT, CENTER);
+    rectMode(CORNER);
+    noStroke();
+    for (int i=0; i < n_states; i++) {
+      float total = n_total_list.get(i);
+      float healthy = n_healthy_list.get(i);
+      float infected = n_infected_list.get(i);
+      float incubated = n_incubated_list.get(i);
+      float symptoms = n_symptoms_list.get(i);
+      float quarantined = n_quarantined_list.get(i);
+      float retired = n_retired_list.get(i);
+
+
+      fill(color_healthy); 
+      rect(i*w, 0, w, h*healthy/total);
+      fill(color_infected); 
+      rect(i*w, h*healthy/total, w, h*infected/total);
+      fill(color_incubated);
+      rect(i*w, h*(healthy+infected)/total, w, h*incubated/total);
+      fill(color_symptoms); 
+      rect(i*w, h*(healthy+infected+incubated)/total, w, h*symptoms/total);
+      fill(color_quarantined); 
+      rect(i*w, h*(healthy+infected+incubated+symptoms)/total, w, h*quarantined/total);
+      fill(color_retired);
+      rect(i*w, h*(healthy+infected+incubated+symptoms+quarantined)/total, w, h*retired/total);
+    }
+    popMatrix();
+    translate(205, 20);
+    float min_percentage = 0.03;
+    if (n_healthy/n_total > min_percentage) {
+      fill(color_healthy); 
+      text("Healthy: " + int(n_healthy), w+20, 0.5*h*n_healthy/n_total);
+    }
+    if (n_infected/n_total > min_percentage) {
+      fill(color_infected); 
+      text("Infected: " + int(n_infected), w+20, h*(n_healthy+n_infected*0.5)/n_total);
+    }
+    if (n_incubated/n_total > min_percentage) { 
+      fill(color_incubated); 
+      text("Incubated: " + int(n_incubated), w+20, h*(n_healthy+n_infected+n_incubated*0.5)/n_total);
+    }
+    if (n_symptoms/n_total > min_percentage) {
+      fill(color_symptoms);
+      text("Symptoms: " + int(n_symptoms), w+20, h*(n_healthy+n_infected+n_incubated+n_symptoms*0.5)/n_total);
+    }
+    if (n_quarantined/n_total > min_percentage) { 
+      fill(color_quarantined); 
+      text("Quarantined: " + int(n_quarantined), w+20, h*(n_healthy+n_infected+n_incubated+n_symptoms+n_quarantined*0.5)/n_total);
+    }
+    if (n_retired/n_total > min_percentage) {
+      fill(color_retired);
+      text("Retired: " + int(n_retired), w+20, h*(n_healthy+n_infected+n_incubated+n_symptoms+n_quarantined+n_retired*0.5)/n_total);
+    }
+    popMatrix();
+    n_healthy = 0; 
+    n_infected = 0; 
+    n_incubated = 0; 
+    n_symptoms = 0; 
+    n_quarantined = 0; 
+    n_retired = 0;
   }
 
   void display_bnds() {
