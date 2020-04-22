@@ -151,13 +151,13 @@ class Agent {
           stroke(255, 100);
           strokeWeight(1);
           line(particle.pos.x, particle.pos.y, agent.particle.pos.x, agent.particle.pos.y);
-          if (this.has_app) { // and if(this.resting = false) only monitor in working place
+          if (this.has_app && agent.has_app) { 
             if (flip(gui.prob_bt)) {
               hm_bt.update(agent.id);
-              if (hm_bt.get_value(agent.id) >= period_connection) {
+              //if (hm_bt.get_value(agent.id) >= period_connection) {
                 this.write_register(agent.id, distance(agent));
                 hm_bt.delete(agent.id);
-              }
+              //}
             }
           }
 
@@ -176,7 +176,7 @@ class Agent {
   }
 
   void write_register(int id, float dist) {
-    register.add(new Contact(ts, this.id, id, dist));
+    register.add(new Contact(ts, date, this.id, id, dist));
   }
 
   void delete_register(int period_delete) {   
@@ -266,7 +266,7 @@ class Agent {
 
 
 
-float r = 20;
+float r = 15;
 void init_agents() {
   for (Environment env : envs) {
     if (env.params.type == 0) {
