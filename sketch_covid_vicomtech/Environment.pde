@@ -30,12 +30,12 @@ class Environment {
     this.bnd.display(this.params.c, 3);
     //this.qt.display();
   }
-  
-  PVector random_pos(){
+
+  PVector random_pos() {
     return this.bnd.random_pos();
   }
-  
-  void set_name(String name){
+
+  void set_name(String name) {
     this.name = name;
   }
 }
@@ -75,34 +75,33 @@ class Env_Params {
 
   void display_time(float x, float y) {
     int kx = 13, ky = 15;
-    
+
     float m = this.ts_stop-this.ts_start;
 
     pushMatrix();
     translate(x, y);
-    translate(20, 40);
+    translate(20, 50);
     fill(this.c);
     noStroke();
     rectMode(CORNER);
     rect(this.ts_start*kx, ky/4, m*kx, ky);
-    
-    int e = 0;
-    if(name == "Room") e = 30;
-    
+
+    int e = name == "Room" ? 25 : 0;
+
     noFill();
     stroke(this.c);
     strokeWeight(2);
-    line((this.ts_start+m/2)*kx, 5*ky/4, (this.ts_start+m/2)*kx, 4*ky + e);
-    
+    line((this.ts_start+m/2)*kx, 5*ky/4, (this.ts_start+m/2)*kx, 3*ky + e);
+
     fill(this.c);
     rectMode(CENTER);
-    rect((this.ts_start+m/2)*kx, 9*ky/2 + e, 10*name.length(), ky, 4);
-    
+    rect((this.ts_start+m/2)*kx, 7*ky/2 + e, 10*name.length(), ky, 4);
+
     fill(gui.color_gui);
     textAlign(CENTER, CENTER);
     textSize(12);
-    text(this.name,(this.ts_start+m/2)*kx, 4.25*ky + e); 
-    
+    text(this.name, (this.ts_start+m/2)*kx, 3.3*ky + e);
+
     popMatrix();
   }
 }
@@ -125,8 +124,8 @@ void init_environments() {
 }
 
 
-void init_custom_environments(){
-  for(int i=0; i < bnds.size(); i++){
+void init_custom_environments() {
+  for (int i=0; i < bnds.size(); i++) {
     Env_Params params;
     if (bnd_type.get(i) == 0) params = office;
     else params = room;
@@ -135,5 +134,4 @@ void init_custom_environments(){
     if (bnd_type.get(i) == 0) offices.add(env);
     else rooms.add(env);
   }
-  
 }
