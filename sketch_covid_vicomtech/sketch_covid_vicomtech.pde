@@ -12,7 +12,7 @@ Server server;
 GUI gui = new GUI();
 
 PrintWriter output; 
-boolean save_result = false;
+boolean save_result = true;
 
 PImage logo, plan_A, plan_B, plan_C, plan_D, plan_E;
 PFont font;
@@ -85,7 +85,7 @@ void setup() {
 
   if (save_result) {
     output = createWriter("result.txt"); 
-    output.println("ts,agent_A,agent_B,dist");
+    output.println("date,agent_A,agent_B,dist");
   }
 
   reset();

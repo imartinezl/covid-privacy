@@ -33,7 +33,7 @@ class Meeting {
 }
 
 void init_meetings() {
-  int n_meetings = 10;
+  int n_meetings = 20;
   meetings.clear();
   for (int i=0; i < n_meetings; i++) {
     // people

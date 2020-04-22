@@ -107,7 +107,7 @@ class GUI {
       .moveTo(g1)
       .setPosition(10, 40)
       .setSize(50, 20)
-      .setValue(true)
+      .setValue(false)
       .setMode(ControlP5.SWITCH)
       .setCaptionLabel("Env Custom")
       ;
