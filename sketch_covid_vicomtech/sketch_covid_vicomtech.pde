@@ -28,8 +28,8 @@ void init() {
   bnds = new ArrayList<Rectangle>();
   meetings = new ArrayList<Meeting>();
 
-  grid_hospital = new Grid("Hospital", gui.m+gui.wa+gui.wb, 2*gui.m, 15, 1, 12, 12);
-  grid_home = new Grid("Quarantine", gui.m+gui.wa+gui.wb, 3*height/4-gui.m, 15, 1, 12, 12);
+  grid_hospital = new Grid("Hospital", gui.m+gui.wa+gui.wb, height/4-gui.m, 25, 1, 12, 12);
+  grid_home = new Grid("Quarantine", gui.m+gui.wa+gui.wb, 2*gui.m, 25, 1, 12, 12);
 
   office = new Env_Params("Office", 0, gui.office_hours, gui.color_office);
   room = new Env_Params("Room", 1, gui.room_hours, gui.color_room);
@@ -40,12 +40,20 @@ void init() {
 
 void reset() {
   init();
-  //init_boundaries();
-  init_custom_boundaries();
-  //init_environments();
-  init_custom_environments();
+  if (gui.env_custom) {
+    init_custom_boundaries();
+    init_custom_environments();
+  } else {
+    init_boundaries();
+    init_environments();
+  }
   init_agents();
   init_meetings();
+}
+
+boolean start = false;
+void run() {
+  start = !start;
 }
 
 void setup() {
@@ -93,7 +101,7 @@ void draw() {
   gui.display_title(gui.m, gui.m);
   gui.display_info(gui.m, height-gui.m);
   gui.display_cp5_title(gui.m, 570);
-  gui.display_plans();
+  if (gui.env_custom) gui.display_plans();
 
   // grids
   grid_hospital.update();
@@ -104,9 +112,9 @@ void draw() {
   // environments
   for (Environment env : envs) {
     env.init_qt();
-    //env.display();
+    if (!gui.env_custom) env.display();
   }
-  
+
   // time
   float px = gui.m, py = gui.m + 350;
   office.display_time(px, py);
@@ -123,10 +131,10 @@ void draw() {
   // env params
   office.update();
   room.update();
-  
+
   // meetings
-  if(date % (60*24) < tunit) init_meetings();
-  for(Meeting m: meetings){
+  if (date % (60*24) < tunit) init_meetings();
+  for (Meeting m : meetings) {
     m.update();
   }
 
@@ -139,9 +147,12 @@ void draw() {
   for (Agent agent : agents) {
     agent.interact();
   }
-  ts++;
-  date += tunit;
- 
+  gui.display_state(gui.wa + gui.wb + gui.m, height/2);
+
+  if (start) {
+    ts++;
+    date += tunit;
+  }
 }
 
 
