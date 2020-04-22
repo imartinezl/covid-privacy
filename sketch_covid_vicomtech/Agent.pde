@@ -148,7 +148,9 @@ class Agent {
       this.delete_register(period_delete);
       for (Agent agent : neighbors) {
         if ( agent != this) {
-
+          stroke(255, 100);
+          strokeWeight(1);
+          line(particle.pos.x, particle.pos.y, agent.particle.pos.x, agent.particle.pos.y);
           if (this.has_app) { // and if(this.resting = false) only monitor in working place
             if (flip(gui.prob_bt)) {
               hm_bt.update(agent.id);
@@ -221,7 +223,7 @@ class Agent {
     if (!this.in_office) c = color(c, 180); //gui.color_gray;
     fill(c);
     noStroke();
-    circle(this.particle.pos.x, this.particle.pos.y, 4*2);
+    circle(this.particle.pos.x, this.particle.pos.y, 3*2);
   }
 
   void display_comm() {
@@ -235,7 +237,7 @@ class Agent {
       fill(c);
       noStroke();
       //if (this.has_app) stroke(255);
-      circle(this.particle.pos.x, this.particle.pos.y, 5*2);
+      circle(this.particle.pos.x, this.particle.pos.y, 4*2);
     }
   }
 
@@ -246,7 +248,7 @@ class Agent {
     if (this.state.incubated) c = gui.color_incubated;
     if (this.state.symptoms) c = gui.color_symptoms;
     noFill();
-    stroke(c, 255*(1-r/this.particle.r));
+    stroke(c, 200*(1-r/this.particle.r));
     strokeWeight(1);
     circle(particle.pos.x, this.particle.pos.y, r*2);
     r += rp;
@@ -264,7 +266,7 @@ class Agent {
 
 
 
-float r = 15;
+float r = 20;
 void init_agents() {
   for (Environment env : envs) {
     if (env.params.type == 0) {
