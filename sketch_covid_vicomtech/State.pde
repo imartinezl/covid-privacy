@@ -1,3 +1,4 @@
+float n_healthy, n_infected, n_incubated, n_symptoms, n_quarantined, n_retired, n_total;
 class State {
 
   long ts_infection, ts_incubated, ts_symptoms, ts_reported, ts_retired, ts_alerted, ts_quarantined;
@@ -15,7 +16,7 @@ class State {
 
   void init() {
     this.init_params();
-    
+
     this.infected = false;
     this.incubated = false;
     this.symptoms = false;
@@ -32,8 +33,8 @@ class State {
     this.cell_home = null;
     this.cell_hospital = null;
   }
-  
-  void init_params(){
+
+  void init_params() {
     this.prob_symptoms = gui.prob_symptoms; // probability of having symptoms after being infected
     this.prob_retire = gui.prob_retire; // probability of a symptomatic person to retire to their home
     this.prob_report = gui.prob_report; // probability of a symptomatic person to report their status
@@ -42,8 +43,7 @@ class State {
     this.period_symptoms = gui.period_symptoms*24*60;
     this.period_report = gui.period_report*24*60;
     this.period_retire = gui.period_retire*24*60;
-    this.period_quarantine = gui.period_quarantine*24*60;  
-
+    this.period_quarantine = gui.period_quarantine*24*60;
   }
 
   void set_infected() {
@@ -81,7 +81,7 @@ class State {
   void set_quarantined() {
     this.quarantined = true;
     this.ts_quarantined = ts;
-    
+
     this.update_outdoors();
   }
 
@@ -151,6 +151,15 @@ class State {
     }
   }
 
+  void update_count() {
+    if (retired) n_retired++;
+    else if (quarantined) n_quarantined++;
+    else if (symptoms) n_symptoms++;
+    else if (incubated) n_incubated++;
+    else if (infected) n_infected++;
+    else n_healthy++;
+  }
+
 
   void update() {
     this.init_params();
@@ -161,5 +170,6 @@ class State {
     this.update_alerted();
     this.update_outdoors();
     this.update_quarantine();
+    this.update_count();
   }
 }
