@@ -1,3 +1,4 @@
+import java.util.Random;
 class Particle {
 
   Grid grid;
@@ -159,18 +160,18 @@ class Particle {
 
   PVector pre;
   void display_particle() {
-    //pushMatrix();
+    pushMatrix();
     PVector me = grid.real_pos(pos);
-    //translate(me.x, me.y);
-    //fill(0, 50);
-    //noStroke();
-    //circle(0, 0, 6);
-    noFill();
-    stroke(0, map(dist(me.x, me.y, 400, 400), 300, 400, 1, 0));
-    strokeWeight(random(2));
-    if(pre != null) line(pre.x, pre.y, me.x, me.y); 
-    pre = me;
-    //popMatrix();
+    translate(me.x, me.y);
+    fill(0, 50);
+    noStroke();
+    circle(0, 0, 6);
+    //noFill();
+    //stroke(0, map(dist(me.x, me.y, 400, 400), 300, 400, 1, 0));
+    //strokeWeight(random(2));
+    //if(pre != null) line(pre.x, pre.y, me.x, me.y); 
+    //pre = me;
+    popMatrix();
   }
   
   void display_trace(){
